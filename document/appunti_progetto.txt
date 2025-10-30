@@ -1,0 +1,3 @@
+Note per il progetto Lucene. 
+L'indicizzazione deve essere completata entro: ore 18 del 3 novembre. 
+Stiamo programmando un motore di ricerca semplice. Il programma deve funzionare.
