@@ -4,6 +4,17 @@ Questo progetto implementa un motore di ricerca per file `.txt` locali utilizzan
 * `Indexer.java`: Legge i file da una directory, li analizza e crea un indice.
 * `Searcher.java`: Legge una query da console, interroga l'indice e restituisce i risultati con i tempi di ricerca.
 
+Per ogni file sono stati indicizzati due campi distinti: `nome` (il nome del file) e `contenuto` (il testo completo all'interno del file).
+
+## Struttura del progetto
+* `scr/javaFiles`: contiene il file sorgente Java
+
+    * `Indexer.java`: Classe per l'indicizzazione dei file `.txt`
+    * `Searcher.java`: Classe che legge da riga di comando, effettua la ricerca e stampa i risultati a schermo. 
+
+* `document`: contiene i file `.txt`
+* `index`: dove viene salvato l'indice creato
+* `lib`: contiene le librerie Lucene 
 ## Analyzer Utilizzati
 
 Per questo progetto sono stati utilizzati due analyzer diversi, assegnati ai campi specifici tramite un `PerFieldAnalyzerWrapper`:
@@ -26,11 +37,6 @@ Per questo progetto sono stati utilizzati due analyzer diversi, assegnati ai cam
 
 Il contenuto dei file è testo in linguaggio naturale. Per ottenere una ricerca pertinente, non possiamo limitarci a cercare le parole esatte. Un utente che cerca "gatto che corre" si aspetta di trovare un documento che contiene "i gatti correvano". L'`ItalianAnalyzer` gestisce questa complessità, permettendo al motore di ricerca di associare le query alle loro varianti grammaticali presenti nei documenti, migliorando drasticamente la qualità dei risultati.
 
-## Dati di Indicizzazione
-
-* **File Indicizzati:** 5 file `.txt`.
-* **Tempo di Indicizzazione medio:** 
-
 
 
 ## 3. Query di Test
@@ -52,10 +58,29 @@ Di seguito sono riportate le 10 query utilizzate per testare il sistema.
 
 
 ---
+## 4.Requisiti
+* Java 23
+* Apache Lucene 10.3.1 (incluso nella cartella `\lib`)
 
-## 4. Come Eseguire il Progetto
+
+## 5. Come Eseguire il Progetto
 
 1.  Assicurarsi di avere i file `.jar` di Lucene 10.3.1 nella cartella `lib/` e che siano aggiunti al classpath.
 2.  Modificare le variabili `DIR_FILE` (in `Indexer.java`) e `DIR_INDICE` (in `Indexer.java` e `Searcher.java`) con i path assoluti del proprio sistema.
 3.  Eseguire `Indexer.java` per creare l'indice.
 4.  Eseguire `Searcher.java` per iniziare a fare query.
+
+## Compilazione
+```
+# Su Linux
+javac -cp "lib/*" -d target/classes src/javaFiles/*.java
+``` 
+## Esecuzione
+```
+# Su linux
+javac -cp "target/classes:lib/*" javaFiles.Indexer
+javac -cp "target/classes:lib/*" javaFiles.Searcher
+``` 
+* Il programma Indexer una volta eseguito indicizzerà i file nella cartella `document/`. 
+* Il programma Searcher abilita la ricerca a riga di comando, spiegando la sintassi all'avvio. Per uscire basta digitare 'esci'. 
+
