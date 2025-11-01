@@ -33,7 +33,7 @@ public class Searcher {
         
         Path indexPath = Paths.get(DIR_INDEX);
 
-        // Controllo 1: Esiste?
+        //CONTROLLI PER IL PATH
         if (!Files.exists(indexPath)) {
             System.err.println("Errore: La directory dell'indice non è stata trovata.");
             // Stampa il path assoluto che stava cercando, utilissimo per il debug!
@@ -42,14 +42,14 @@ public class Searcher {
             return; // Esce dal programma
         }
         
-        // Controllo 2: È una directory?
+        // Controllo se è una directory
         if (!Files.isDirectory(indexPath)) {
             System.err.println("Errore: Il path specificato non è una directory.");
             System.err.println("Path: " + indexPath.toAbsolutePath());
             return;
         }
 
-        // Controllo 3: È leggibile?
+        // Controllo se si può leggere
         if (!Files.isReadable(indexPath)) {
             System.err.println("Errore: Non si hanno i permessi di lettura per la directory dell'indice.");
             System.err.println("Path: " + indexPath.toAbsolutePath());
