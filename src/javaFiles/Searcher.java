@@ -2,6 +2,7 @@ package javaFiles;
 
 
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -12,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -27,12 +27,37 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.analysis.it.ItalianAnalyzer;
 
 public class Searcher {
-    private static final String DIR_INDEX = "/home/vboxuser/IngegneriaDeiDati/homework2/index";
-
+    
+    private static final String DIR_INDEX = "homework2/index";
     public static void main(String[] args) throws Exception {
         
+        Path indexPath = Paths.get(DIR_INDEX);
+
+        // Controllo 1: Esiste?
+        if (!Files.exists(indexPath)) {
+            System.err.println("Errore: La directory dell'indice non è stata trovata.");
+            // Stampa il path assoluto che stava cercando, utilissimo per il debug!
+            System.err.println("Path cercato: " + indexPath.toAbsolutePath());
+            System.err.println("Assicurati di eseguire il programma dalla directory corretta o che la cartella '" + DIR_INDEX + "' esista.");
+            return; // Esce dal programma
+        }
+        
+        // Controllo 2: È una directory?
+        if (!Files.isDirectory(indexPath)) {
+            System.err.println("Errore: Il path specificato non è una directory.");
+            System.err.println("Path: " + indexPath.toAbsolutePath());
+            return;
+        }
+
+        // Controllo 3: È leggibile?
+        if (!Files.isReadable(indexPath)) {
+            System.err.println("Errore: Non si hanno i permessi di lettura per la directory dell'indice.");
+            System.err.println("Path: " + indexPath.toAbsolutePath());
+            return;
+        }
+
         // Apertura indice in lettura
-        Directory indexDir = FSDirectory.open(Paths.get(DIR_INDEX));
+        Directory indexDir = FSDirectory.open(indexPath);
         IndexReader reader = DirectoryReader.open(indexDir);
         IndexSearcher searcher = new IndexSearcher(reader);
 
@@ -105,7 +130,7 @@ public class Searcher {
 
         
         scanner.close();
-        //reader.close();
+        reader.close();
         indexDir.close();
         System.out.println("Ricerca terminata. ");
     }   

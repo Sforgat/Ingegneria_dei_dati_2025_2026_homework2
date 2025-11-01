@@ -6,7 +6,6 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
@@ -19,15 +18,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class Indexer {
     
-    private static final String DIR_INDEX = "/home/vboxuser/IngegneriaDeiDati/homework2/index";
-    private static final String DIR_FILE = "/home/vboxuser/IngegneriaDeiDati/homework2/document";
+    private static final String DIR_INDEX = "homework2/index";
+    private static final String DIR_FILE = "homework2/document";
 
     public static void main(String[] args) throws Exception {
         
@@ -35,8 +33,67 @@ public class Indexer {
 
         Long startTime = System.nanoTime(); // calcolo il tempo impiegato a cercare il documento
 
+        Path indexPath = Paths.get(DIR_INDEX);
+
+        //CONTROLLI PER IL PATH
+        if (!Files.exists(indexPath)) {
+            // Se non esiste, proviamo a crearlo
+            try {
+                Files.createDirectories(indexPath);
+                System.out.println("Directory indice creata: " + indexPath.toAbsolutePath());
+            } catch (IOException e) {
+                System.err.println("Errore: Impossibile creare la directory dell'indice.");
+                System.err.println("Path: " + indexPath.toAbsolutePath());
+                e.printStackTrace();
+                return;
+            }
+        }
+        
+        // Controllo se è una directory
+        if (!Files.isDirectory(indexPath)) {
+            System.err.println("Errore: Il path dell'indice non è una directory.");
+            System.err.println("Path: " + indexPath.toAbsolutePath());
+            return;
+        }
+
+        // Controllo se si può scrivere
+        if (!Files.isWritable(indexPath)) {
+            System.err.println("Errore: Non si hanno i permessi di scrittura per la directory dell'indice.");
+            System.err.println("Path: " + indexPath.toAbsolutePath());
+            return;
+        }
+        //System.out.println("Path indice OK: " + indexPath.toAbsolutePath());
+
+
+        //CONTROLLO PATH DOCUMENTI 
+        Path docPath = Paths.get(DIR_FILE);
+
+        
+        if (!Files.exists(docPath)) {
+            System.err.println("Errore: La directory dei documenti non è stata trovata.");
+            System.err.println("Path cercato: " + docPath.toAbsolutePath());
+            System.err.println("Assicurati di eseguire il programma dalla directory corretta.");
+            return; // Esce dal programma
+        }
+        
+        
+        if (!Files.isDirectory(docPath)) {
+            System.err.println("Errore: Il path dei documenti non è una directory.");
+            System.err.println("Path: " + docPath.toAbsolutePath());
+            return;
+        }
+
+        // Controllo se su può leggere
+        if (!Files.isReadable(docPath)) {
+            System.err.println("Errore: Non si hanno i permessi di lettura per la directory dei documenti.");
+            System.err.println("Path: " + docPath.toAbsolutePath());
+            return;
+        }
+        //System.out.println("Path documenti OK: " + docPath.toAbsolutePath());
+
+        
         // Creo la directory Lucene per gli accessi in lettura/scrittura
-        Directory indexDir = FSDirectory.open(Paths.get(DIR_INDEX));
+        Directory indexDir = FSDirectory.open(indexPath);
 
         // Imposto gli analyzer
         Map<String,Analyzer> analyzerMap = new HashMap<>();
@@ -52,6 +109,7 @@ public class Indexer {
 
         // per salvare direttamente le modifiche (commit) uso il try-with-resources, così che sblocca anche ad altri processi dopo il close
         try (IndexWriter writer = new IndexWriter(indexDir, config)) {
+
 
             // scansiono tutti i file .txt
             File dFile = new File(DIR_FILE);
