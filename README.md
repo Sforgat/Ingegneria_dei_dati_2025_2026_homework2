@@ -66,7 +66,6 @@ Di seguito sono riportate le 10 query utilizzate per testare il sistema.
 ## 5. Come Eseguire il Progetto
 
 1.  Assicurarsi di avere i file `.jar` di Lucene 10.3.1 nella cartella `lib/` e che siano aggiunti al classpath.
-2.  Modificare le variabili `DIR_FILE` (in `Indexer.java`) e `DIR_INDICE` (in `Indexer.java` e `Searcher.java`) con i path assoluti del proprio sistema.
 3.  Eseguire `Indexer.java` per creare l'indice.
 4.  Eseguire `Searcher.java` per iniziare a fare query.
 
